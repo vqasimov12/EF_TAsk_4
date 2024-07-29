@@ -33,6 +33,9 @@ public class UnivercityContext : DbContext
             .HasMaxLength(10)
             .IsRequired().HasColumnType("nvarchar");
         modelBuilder.Entity<Group>().HasIndex(x => x.Name);
+        modelBuilder.Entity<Group>()
+             .ToTable(x => x.HasCheckConstraint("CK_Group_Name", "Name!= ''"));
+
 
         modelBuilder.Entity<Group>()
             .Property(x => x.Rating)
@@ -70,6 +73,9 @@ public class UnivercityContext : DbContext
              .IsRequired()
              .HasMaxLength(100);
         modelBuilder.Entity<Department>().HasIndex(x => x.Name);
+        modelBuilder.Entity<Department>()
+             .ToTable(x => x.HasCheckConstraint("CK_Department_Name", "Name !=''"));
+
 
         #endregion
 
@@ -88,44 +94,9 @@ public class UnivercityContext : DbContext
            .IsRequired()
            .HasMaxLength(100);
         modelBuilder.Entity<Faculty>().HasIndex(x => x.Name);
+        modelBuilder.Entity<Faculty>()
+             .ToTable(x => x.HasCheckConstraint("CK_Faculty_Name", "Name !=''"));
 
-        #endregion
-
-        #region Student
-
-        modelBuilder.Entity<Student>()
-            .Property(x => x.StudentId)
-            .HasColumnName("Id")
-            .HasColumnType("int");
-        modelBuilder.Entity<Student>()
-            .HasKey(x => x.StudentId);
-
-        modelBuilder.Entity<Student>()
-             .Property(x => x.FirstName)
-             .HasColumnType("nvarchar")
-             .IsRequired()
-             .HasColumnName("Name");
-
-        modelBuilder.Entity<Student>()
-             .Property(x => x.LastName)
-             .HasColumnType("nvarchar")
-             .IsRequired()
-             .HasColumnName("Surname");
-
-
-        modelBuilder.Entity<Student>()
-           .HasOne(s => s.Faculty)
-           .WithMany(f => f.Students)
-           .HasForeignKey(x => x.StudentId)
-           .OnDelete(DeleteBehavior.Cascade)
-           .HasConstraintName("FK_Faculty");
-
-        modelBuilder.Entity<Student>()
-           .HasOne(s => s.Group)
-           .WithMany(f => f.Students)
-           .HasForeignKey(x => x.StudentId)
-           .OnDelete(DeleteBehavior.Cascade)
-           .HasConstraintName("FK_Group");
         #endregion
 
         #region Teacher
@@ -150,12 +121,18 @@ public class UnivercityContext : DbContext
              .HasColumnType("nvarchar")
              .IsRequired()
              .HasColumnName("Name");
+        modelBuilder.Entity<Teacher>()
+             .ToTable(x => x.HasCheckConstraint("CK_Teacher_Name", "Name !=''"));
+
 
         modelBuilder.Entity<Teacher>()
              .Property(x => x.LastName)
              .HasColumnType("nvarchar")
              .IsRequired()
              .HasColumnName("Surname");
+        modelBuilder.Entity<Teacher>()
+             .ToTable(x => x.HasCheckConstraint("CK_Teacher_Surname", "Surname !=''"));
+
 
         modelBuilder.Entity<Teacher>()
             .Property(x => x.EmploymentDate)
@@ -179,6 +156,49 @@ public class UnivercityContext : DbContext
 
 
 
+        #endregion
+
+        #region Student
+
+        modelBuilder.Entity<Student>()
+            .Property(x => x.StudentId)
+            .HasColumnName("Id")
+            .HasColumnType("int");
+        modelBuilder.Entity<Student>()
+            .HasKey(x => x.StudentId);
+
+        modelBuilder.Entity<Student>()
+             .Property(x => x.FirstName)
+             .HasColumnType("nvarchar")
+             .IsRequired()
+             .HasColumnName("Name");
+        modelBuilder.Entity<Student>()
+     .ToTable(x => x.HasCheckConstraint("CK_Student_Name", "Name !=''"));
+
+
+        modelBuilder.Entity<Student>()
+             .Property(x => x.LastName)
+             .HasColumnType("nvarchar")
+             .IsRequired()
+             .HasColumnName("Surname");
+        modelBuilder.Entity<Student>()
+            .ToTable(x => x.HasCheckConstraint("CK_Student_Surname", "Surname !=''"));
+
+
+
+        modelBuilder.Entity<Student>()
+           .HasOne(s => s.Faculty)
+           .WithMany(f => f.Students)
+           .HasForeignKey(x => x.StudentId)
+           .OnDelete(DeleteBehavior.Cascade)
+           .HasConstraintName("FK_Faculty");
+
+        modelBuilder.Entity<Student>()
+           .HasOne(s => s.Group)
+           .WithMany(f => f.Students)
+           .HasForeignKey(x => x.StudentId)
+           .OnDelete(DeleteBehavior.Cascade)
+           .HasConstraintName("FK_Group");
         #endregion
 
     }
